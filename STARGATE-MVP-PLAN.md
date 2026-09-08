@@ -1,6 +1,6 @@
 # STARGATE MVP — Master Build Plan
 
-Source of truth for V1. Derived from `business model.md`.
+Source of truth for V1. Derived from `business-model.md`.
 
 ---
 

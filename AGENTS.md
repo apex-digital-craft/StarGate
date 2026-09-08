@@ -1,7 +1,7 @@
 # AGENTS.md — STARGATE
 
 Greenfield repo. No code scaffolded yet (only planning docs, `main` has 0 commits).
-Source of truth: `STARGATE-MVP-PLAN.md` (derived from `business model.md`). Trust the plan over anything else.
+Source of truth: `STARGATE-MVP-PLAN.md` (derived from `business-model.md`). Trust the plan over anything else.
 
 ## What we're building
 Review-gating micro-SaaS for local SMBs. Flow: QR scan → `/s/[slug]` 1–5 star tap → 1–3 stars = private feedback + Telegram alert + freebie, 4–5 stars = Google Review CTA + freebie. Freebie is URL-only in V1 (no uploads).
@@ -33,3 +33,13 @@ Review-gating micro-SaaS for local SMBs. Flow: QR scan → `/s/[slug]` 1–5 sta
 
 ## Verify
 No test/lint harness yet. When code exists: manual QA = §4 of `STARGATE-MVP-PLAN.md` (9 phone checks: good/bad/empty rating, gift link, QR scan at 2–3 ft, new-shop creation, <1 min end-to-end with Telegram <10s). Pass = all 9 green; failures in 3/5/9 block pilot.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
