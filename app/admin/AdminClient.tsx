@@ -9,6 +9,7 @@ export type AdminMerchant = {
   freebie_title: string;
   feedbackCount: number;
   clickCount: number;
+  owner_email: string | null;
 };
 
 function slugify(input: string): string {
@@ -97,6 +98,7 @@ export default function AdminClient({
           freebie_title: freebieTitle,
           feedbackCount: 0,
           clickCount: 0,
+          owner_email: null,
         },
         ...prev,
       ]);
@@ -222,37 +224,20 @@ export default function AdminClient({
           </h2>
           <div className="mt-3 flex flex-col gap-3">
             {merchants.map((m) => (
-              <div key={m.id} className="rounded-2xl border border-zinc-200 bg-white p-4">
-                <p className="font-semibold text-zinc-900">{m.shop_name}</p>
-                <p className="text-sm text-zinc-500">
-                  /s/{m.slug} · {m.clickCount} review clicks · {m.feedbackCount} private feedbacks
-                </p>
-                <div className="mt-3 flex gap-2">
-                  <a
-                    href={`/s/${m.slug}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex h-10 flex-1 items-center justify-center rounded-full border border-zinc-300 text-sm font-semibold text-zinc-800"
-                  >
-                    Funnel
-                  </a>
-                  <a
-                    href={`/admin/poster/${m.slug}?key=${encodeURIComponent(adminKey)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex h-10 flex-1 items-center justify-center rounded-full border border-zinc-300 text-sm font-semibold text-zinc-800"
-                  >
-                    Poster
-                  </a>
-                  <button
-                    type="button"
-                    onClick={() => copyQrUrl(m.slug)}
-                    className="h-10 flex-1 rounded-full bg-zinc-900 text-sm font-semibold text-white"
-                  >
-                    {copied === m.slug ? "Copied!" : "Copy QR URL"}
-                  </button>
-                </div>
-              </div>
+              <ShopCard
+                key={m.id}
+                merchant={m}
+                adminKey={adminKey}
+                copied={copied === m.slug}
+                onCopy={() => copyQrUrl(m.slug)}
+                onOwnerChange={(email) =>
+                  setMerchants((prev) =>
+                    prev.map((p) =>
+                      p.slug === m.slug ? { ...p, owner_email: email } : p
+                    )
+                  )
+                }
+              />
             ))}
             {merchants.length === 0 ? (
               <p className="text-sm text-zinc-500">No shops yet — create the first one above.</p>
@@ -261,5 +246,116 @@ export default function AdminClient({
         </section>
       </div>
     </main>
+  );
+}
+
+function ShopCard({
+  merchant: m,
+  adminKey,
+  copied,
+  onCopy,
+  onOwnerChange,
+}: {
+  merchant: AdminMerchant;
+  adminKey: string;
+  copied: boolean;
+  onCopy: () => void;
+  onOwnerChange: (email: string | null) => void;
+}) {
+  const [email, setEmail] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+
+  async function assign(unassign: boolean) {
+    setBusy(true);
+    setError("");
+    try {
+      const res = await fetch("/api/admin/claim", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          key: adminKey,
+          slug: m.slug,
+          owner_email: unassign ? "" : email,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error ?? `Request failed (${res.status})`);
+      onOwnerChange(data.owner ?? null);
+      setEmail("");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Couldn't update owner.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="rounded-2xl border border-zinc-200 bg-white p-4">
+      <p className="font-semibold text-zinc-900">{m.shop_name}</p>
+      <p className="text-sm text-zinc-500">
+        /s/{m.slug} · {m.clickCount} review clicks · {m.feedbackCount} private feedbacks
+      </p>
+      <p className="mt-1 text-sm text-zinc-500">
+        Owner: {m.owner_email ?? "unassigned"}
+      </p>
+      <div className="mt-3 flex gap-2">
+        <a
+          href={`/s/${m.slug}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex h-10 flex-1 items-center justify-center rounded-full border border-zinc-300 text-sm font-semibold text-zinc-800"
+        >
+          Funnel
+        </a>
+        <a
+          href={`/admin/poster/${m.slug}?key=${encodeURIComponent(adminKey)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex h-10 flex-1 items-center justify-center rounded-full border border-zinc-300 text-sm font-semibold text-zinc-800"
+        >
+          Poster
+        </a>
+        <button
+          type="button"
+          onClick={onCopy}
+          className="h-10 flex-1 rounded-full bg-zinc-900 text-sm font-semibold text-white"
+        >
+          {copied ? "Copied!" : "Copy QR URL"}
+        </button>
+      </div>
+      <div className="mt-3 flex gap-2">
+        <input
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="owner@login.com"
+          inputMode="email"
+          className="h-10 min-w-0 flex-1 rounded-full border border-zinc-300 bg-white px-3 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none"
+        />
+        <button
+          type="button"
+          disabled={busy || !email.trim()}
+          onClick={() => assign(false)}
+          className="h-10 shrink-0 rounded-full bg-zinc-900 px-4 text-sm font-semibold text-white disabled:opacity-60"
+        >
+          Assign
+        </button>
+        {m.owner_email ? (
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => assign(true)}
+            className="h-10 shrink-0 rounded-full border border-zinc-300 px-4 text-sm font-semibold text-zinc-700 disabled:opacity-60"
+          >
+            Unassign
+          </button>
+        ) : null}
+      </div>
+      {error ? (
+        <p role="alert" className="mt-2 text-sm text-red-600">
+          {error}
+        </p>
+      ) : null}
+    </div>
   );
 }

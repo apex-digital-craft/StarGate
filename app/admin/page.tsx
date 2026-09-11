@@ -15,22 +15,31 @@ async function getMerchantsWithCounts(): Promise<AdminMerchant[]> {
 
   const { data: merchants, error } = await service
     .from("merchants")
-    .select("id, slug, shop_name, freebie_title")
+    .select("id, slug, shop_name, freebie_title, owner_id")
     .order("created_at", { ascending: false });
   if (error) throw error;
 
   const rows: AdminMerchant[] = [];
   for (const m of merchants ?? []) {
-    const [{ count: feedbacks }, { count: clicks }] = await Promise.all([
-      service
-        .from("feedbacks")
-        .select("id", { count: "exact", head: true })
-        .eq("merchant_id", m.id),
-      service
-        .from("review_clicks")
-        .select("id", { count: "exact", head: true })
-        .eq("merchant_id", m.id),
-    ]);
+    const [{ count: feedbacks }, { count: clicks }, ownerEmail] =
+      await Promise.all([
+        service
+          .from("feedbacks")
+          .select("id", { count: "exact", head: true })
+          .eq("merchant_id", m.id),
+        service
+          .from("review_clicks")
+          .select("id", { count: "exact", head: true })
+          .eq("merchant_id", m.id),
+        m.owner_id
+          ? service.auth.admin
+              .getUserById(m.owner_id)
+              .then(
+                (r) => r.data.user?.email ?? null,
+                () => null
+              )
+          : Promise.resolve(null),
+      ]);
     rows.push({
       id: m.id,
       slug: m.slug,
@@ -38,6 +47,7 @@ async function getMerchantsWithCounts(): Promise<AdminMerchant[]> {
       freebie_title: m.freebie_title,
       feedbackCount: feedbacks ?? 0,
       clickCount: clicks ?? 0,
+      owner_email: ownerEmail,
     });
   }
   return rows;
