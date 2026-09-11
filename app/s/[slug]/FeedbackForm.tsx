@@ -9,9 +9,11 @@ type Status = "idle" | "sending" | "done" | "error";
 export default function FeedbackForm({
   merchant,
   rating,
+  demo,
 }: {
   merchant: Merchant;
   rating: number;
+  demo?: boolean;
 }) {
   const [text, setText] = useState("");
   const [status, setStatus] = useState<Status>("idle");
@@ -28,6 +30,11 @@ export default function FeedbackForm({
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
+    // Demo mode: simulate success locally. No DB write, no Telegram.
+    if (demo) {
+      setStatus("done");
+      return;
+    }
     setStatus("sending");
     try {
       const res = await fetch("/api/feedback", {

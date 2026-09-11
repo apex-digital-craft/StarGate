@@ -22,7 +22,7 @@ const COLS = [
 export default function SiteFooter() {
   return (
     <footer className="border-t border-zinc-200 bg-white font-sans">
-      <div className="mx-auto grid w-full max-w-xl gap-8 px-6 py-10 sm:grid-cols-3">
+      <div className="mx-auto grid w-full max-w-5xl gap-8 px-6 py-10 sm:grid-cols-3">
         <div>
           <p className="text-sm font-bold tracking-widest text-zinc-900">
             STARGATE

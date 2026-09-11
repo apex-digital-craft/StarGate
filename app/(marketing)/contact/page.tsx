@@ -4,14 +4,15 @@ import { WHATSAPP_URL } from "../whatsapp";
 export default function ContactPage() {
   return (
     <main className="bg-zinc-50 font-sans">
-      <div className="mx-auto w-full max-w-xl px-6 py-12 text-center">
+      <div className="mx-auto w-full max-w-5xl px-6 py-12 text-center">
         <h1 className="text-3xl font-bold text-zinc-900">Contact</h1>
         <p className="mx-auto mt-3 max-w-md text-zinc-600">
           One channel, answered by a human. Tell us your shop name and city —
           we&apos;ll take it from there.
         </p>
 
-        <div className="mx-auto mt-6 max-w-md rounded-2xl border border-zinc-200 bg-white p-6">
+        <div className="mx-auto mt-6 grid max-w-3xl gap-4 text-left sm:grid-cols-2">
+        <div className="rounded-2xl border border-zinc-200 bg-white p-6">
           <p className="text-lg font-semibold text-zinc-900">WhatsApp</p>
           <p className="mt-1 text-sm text-zinc-600">
             Fastest way to start, pay, or get help.
@@ -26,7 +27,7 @@ export default function ContactPage() {
           </a>
         </div>
 
-        <div className="mx-auto mt-4 max-w-md rounded-2xl border border-zinc-200 bg-white p-6">
+        <div className="rounded-2xl border border-zinc-200 bg-white p-6">
           <p className="text-lg font-semibold text-zinc-900">
             Already an owner?
           </p>
@@ -39,6 +40,7 @@ export default function ContactPage() {
           >
             Owner login
           </Link>
+        </div>
         </div>
       </div>
     </main>

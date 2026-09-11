@@ -4,16 +4,25 @@ import { useState } from "react";
 import type { Merchant } from "@/lib/supabase";
 import FreebieUnlock from "./FreebieUnlock";
 
-export default function GoogleReviewCTA({ merchant }: { merchant: Merchant }) {
+export default function GoogleReviewCTA({
+  merchant,
+  demo,
+}: {
+  merchant: Merchant;
+  demo?: boolean;
+}) {
   const [claimed, setClaimed] = useState(false);
 
   function onClaim() {
-    // Fire-and-forget ROI log; gift unlocks immediately, no verification in V1.
-    fetch("/api/review-click", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ slug: merchant.slug }),
-    }).catch(() => {});
+    // Demo mode: skip the ROI log. The Google page still opens for realism.
+    if (!demo) {
+      // Fire-and-forget ROI log; gift unlocks immediately, no verification in V1.
+      fetch("/api/review-click", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug: merchant.slug }),
+      }).catch(() => {});
+    }
     window.open(merchant.google_review_url, "_blank", "noopener");
     setClaimed(true);
   }

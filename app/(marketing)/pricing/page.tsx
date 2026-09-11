@@ -18,7 +18,7 @@ const FAQ = [
 export default function PricingPage() {
   return (
     <main className="bg-zinc-50 font-sans">
-      <div className="mx-auto w-full max-w-xl px-6 py-12">
+      <div className="mx-auto w-full max-w-5xl px-6 py-12">
         <section className="text-center">
           <h1 className="text-3xl font-bold text-zinc-900">Pricing</h1>
           <p className="mx-auto mt-3 max-w-md text-zinc-600">
@@ -26,7 +26,7 @@ export default function PricingPage() {
           </p>
         </section>
 
-        <div className="mt-6 grid grid-cols-2 gap-3">
+        <div className="mx-auto mt-6 grid max-w-2xl grid-cols-2 gap-3">
           <div className="rounded-2xl bg-brand-700 p-5 text-center text-white">
             <p className="text-2xl font-bold">₹299</p>
             <p className="mt-1 text-sm text-brand-100">per month</p>
@@ -45,7 +45,7 @@ export default function PricingPage() {
           href={WHATSAPP_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-6 flex h-14 w-full items-center justify-center rounded-full bg-[#1FA855] text-base font-semibold text-white"
+          className="mx-auto mt-6 flex h-14 w-full max-w-md items-center justify-center rounded-full bg-[#1FA855] text-base font-semibold text-white"
         >
           Start on WhatsApp
         </a>
@@ -54,7 +54,7 @@ export default function PricingPage() {
           <h2 className="text-center text-xl font-semibold text-zinc-900">
             Questions
           </h2>
-          <div className="mt-4 flex flex-col gap-3">
+          <div className="mt-4 grid gap-3 sm:grid-cols-3">
             {FAQ.map((f) => (
               <div
                 key={f.q}

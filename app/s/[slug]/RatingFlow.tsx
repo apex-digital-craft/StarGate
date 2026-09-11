@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import type { Merchant } from "@/lib/supabase";
 import FeedbackForm from "./FeedbackForm";
 import GoogleReviewCTA from "./GoogleReviewCTA";
@@ -26,7 +27,7 @@ function StepDot({ active, done, label }: { active: boolean; done: boolean; labe
   );
 }
 
-export default function RatingFlow({ merchant }: { merchant: Merchant }) {
+function RatingFlowInner({ merchant, demo }: { merchant: Merchant; demo: boolean }) {
   const [rating, setRating] = useState<number | null>(null);
   const rated = rating !== null;
 
@@ -57,6 +58,12 @@ export default function RatingFlow({ merchant }: { merchant: Merchant }) {
       </div>
 
       <div className="px-6 py-6">
+        {demo ? (
+          <p className="mb-4 rounded-full bg-amber-100 px-4 py-1.5 text-center text-xs font-semibold text-amber-800">
+            Demo mode — nothing is saved or sent
+          </p>
+        ) : null}
+
         {/* Steps */}
         <div className="flex items-center justify-center gap-4">
           <StepDot active={!rated} done={rated} label="Rate" />
@@ -101,12 +108,32 @@ export default function RatingFlow({ merchant }: { merchant: Merchant }) {
         </div>
 
         {rated && rating! <= 3 ? (
-          <FeedbackForm merchant={merchant} rating={rating!} />
+          <FeedbackForm merchant={merchant} rating={rating!} demo={demo} />
         ) : null}
         {rated && rating! >= 4 ? (
-          <GoogleReviewCTA merchant={merchant} />
+          <GoogleReviewCTA merchant={merchant} demo={demo} />
         ) : null}
       </div>
     </div>
+  );
+}
+
+function DemoAwareFlow({ merchant }: { merchant: Merchant }) {
+  const searchParams = useSearchParams();
+  const demo = searchParams.get("demo") === "1";
+  return <RatingFlowInner merchant={merchant} demo={demo} />;
+}
+
+export default function RatingFlow({ merchant }: { merchant: Merchant }) {
+  return (
+    <Suspense
+      fallback={
+        <div className="w-full rounded-3xl border border-zinc-200 bg-white p-10 text-center shadow-sm">
+          <p className="text-sm text-zinc-500">Loading…</p>
+        </div>
+      }
+    >
+      <DemoAwareFlow merchant={merchant} />
+    </Suspense>
   );
 }

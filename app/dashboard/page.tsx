@@ -2,7 +2,6 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import Checklist from "./Checklist";
 import QrCard from "./QrCard";
-import RoiCopy from "./RoiCopy";
 
 export const dynamic = "force-dynamic";
 
@@ -91,11 +90,6 @@ export default async function DashboardPage() {
     firstScan = (totalClicks ?? 0) + (totalFeedbacks ?? 0) > 0;
   }
 
-  const roiLine = shop
-    ? `Your STARGATE this month: ${clicks30} Google-review taps + ${feedbacks30} private feedbacks` +
-      (avg !== null ? ` (avg ${avg.toFixed(1)}★)` : "") +
-      ` — ${shop.shop_name}`
-    : "";
   const funnelUrl = shop
     ? `${(process.env.NEXT_PUBLIC_BASE_URL ?? "").replace(/\/$/, "")}/s/${shop.slug}`
     : "";
@@ -139,7 +133,6 @@ export default async function DashboardPage() {
                 sub={`Funnel: /s/${shop.slug}`}
               />
             </div>
-            <RoiCopy line={roiLine} />
             <QrCard url={funnelUrl} />
           </>
         ) : (

@@ -27,7 +27,7 @@ const FEATURES = [
 export default function FeaturesPage() {
   return (
     <main className="bg-zinc-50 font-sans">
-      <div className="mx-auto w-full max-w-xl px-6 py-12">
+      <div className="mx-auto w-full max-w-5xl px-6 py-12">
         <section className="text-center">
           <h1 className="text-3xl font-bold text-zinc-900">Features</h1>
           <p className="mx-auto mt-3 max-w-md text-zinc-600">
@@ -36,7 +36,7 @@ export default function FeaturesPage() {
           </p>
         </section>
 
-        <div className="mt-8 flex flex-col gap-3">
+        <div className="mt-8 grid gap-3 sm:grid-cols-2">
           {FEATURES.map((f) => (
             <section
               key={f.title}
@@ -66,7 +66,7 @@ export default function FeaturesPage() {
           href={WHATSAPP_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-6 flex h-14 w-full items-center justify-center rounded-full bg-[#1FA855] text-base font-semibold text-white"
+          className="mx-auto mt-6 flex h-14 w-full max-w-md items-center justify-center rounded-full bg-[#1FA855] text-base font-semibold text-white"
         >
           Get STARGATE on WhatsApp
         </a>
