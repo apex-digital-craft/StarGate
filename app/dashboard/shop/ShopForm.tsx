@@ -122,7 +122,7 @@ export default function ShopForm({ initial }: { initial: ShopSettings }) {
       <button
         type="submit"
         disabled={status === "saving"}
-        className="h-14 w-full rounded-full bg-zinc-900 text-base font-semibold text-white disabled:opacity-60"
+        className="h-14 w-full rounded-full bg-brand-600 hover:bg-brand-700 text-base font-semibold text-white disabled:opacity-60"
       >
         {status === "saving" ? "Saving…" : "Save changes"}
       </button>

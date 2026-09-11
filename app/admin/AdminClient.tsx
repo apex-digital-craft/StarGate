@@ -211,7 +211,7 @@ export default function AdminClient({
             <button
               type="submit"
               disabled={status === "sending"}
-              className="h-14 w-full rounded-full bg-zinc-900 text-base font-semibold text-white disabled:opacity-60"
+              className="h-14 w-full rounded-full bg-brand-600 hover:bg-brand-700 text-base font-semibold text-white disabled:opacity-60"
             >
               {status === "sending" ? "Creating…" : "Create shop"}
             </button>
@@ -319,7 +319,7 @@ function ShopCard({
         <button
           type="button"
           onClick={onCopy}
-          className="h-10 flex-1 rounded-full bg-zinc-900 text-sm font-semibold text-white"
+          className="h-10 flex-1 rounded-full bg-brand-600 hover:bg-brand-700 text-sm font-semibold text-white"
         >
           {copied ? "Copied!" : "Copy QR URL"}
         </button>
@@ -336,7 +336,7 @@ function ShopCard({
           type="button"
           disabled={busy || !email.trim()}
           onClick={() => assign(false)}
-          className="h-10 shrink-0 rounded-full bg-zinc-900 px-4 text-sm font-semibold text-white disabled:opacity-60"
+          className="h-10 shrink-0 rounded-full bg-brand-600 hover:bg-brand-700 px-4 text-sm font-semibold text-white disabled:opacity-60"
         >
           Assign
         </button>

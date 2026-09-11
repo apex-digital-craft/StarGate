@@ -16,12 +16,12 @@ export default function RoiCopy({ line }: { line: string }) {
   }
 
   return (
-    <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+    <div className="mt-4 rounded-2xl border border-brand-200 bg-brand-50 p-4">
       <p className="text-sm text-zinc-700">{line}</p>
       <button
         type="button"
         onClick={onCopy}
-        className="mt-3 h-11 w-full rounded-full bg-zinc-900 text-sm font-semibold text-white"
+        className="mt-3 h-11 w-full rounded-full bg-brand-600 hover:bg-brand-700 text-sm font-semibold text-white"
       >
         {copied ? "Copied!" : "Copy for WhatsApp"}
       </button>

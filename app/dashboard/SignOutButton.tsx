@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
-export default function SignOutButton() {
+export default function SignOutButton({ compact }: { compact?: boolean }) {
   const router = useRouter();
 
   async function onSignOut() {
@@ -11,6 +11,18 @@ export default function SignOutButton() {
     await supabase.auth.signOut();
     router.push("/login");
     router.refresh();
+  }
+
+  if (compact) {
+    return (
+      <button
+        type="button"
+        onClick={onSignOut}
+        className="h-9 shrink-0 rounded-full border border-zinc-300 bg-white px-4 text-sm font-semibold text-zinc-700"
+      >
+        Sign out
+      </button>
+    );
   }
 
   return (

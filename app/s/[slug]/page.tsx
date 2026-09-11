@@ -24,7 +24,7 @@ export default async function ShopPage({ params }: Props) {
   if (!merchant) notFound();
 
   return (
-    <main className="min-h-dvh bg-zinc-50 font-sans">
+    <main className="min-h-dvh bg-gradient-to-b from-brand-50 to-zinc-50 font-sans">
       <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col items-center justify-center px-6 py-10">
         <RatingFlow merchant={merchant} />
       </div>

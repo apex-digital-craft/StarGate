@@ -1,7 +1,5 @@
 import Link from "next/link";
-
-const WHATSAPP_URL =
-  "https://wa.me/919821323725?text=Hi!%20I%20want%20STARGATE%20for%20my%20shop.";
+import { WHATSAPP_URL } from "./whatsapp";
 
 const STEPS = [
   {
@@ -38,7 +36,7 @@ const BENEFITS = [
 
 export default function Home() {
   return (
-    <main className="min-h-dvh bg-zinc-50 font-sans">
+    <main className="bg-gradient-to-b from-brand-50 via-zinc-50 to-zinc-50 font-sans">
       <div className="mx-auto w-full max-w-xl px-6 py-12">
         {/* Hero */}
         <section className="text-center">
@@ -63,12 +61,34 @@ export default function Home() {
               Chat on WhatsApp — ₹299/month
             </a>
             <Link
-              href="/s/test-cafe"
+              href="/demo"
               className="flex h-14 w-full items-center justify-center rounded-full border border-zinc-300 bg-white text-base font-semibold text-zinc-900"
             >
               Try the live demo
             </Link>
           </div>
+          <p className="mt-4 text-sm text-zinc-500">
+            <Link href="/features" className="font-semibold text-zinc-800">
+              See all features →
+            </Link>
+          </p>
+          {/* Product visual: static mock of the customer funnel */}
+          <Link
+            href="/demo"
+            aria-label="Open the live demo funnel"
+            className="mx-auto mt-8 block max-w-xs overflow-hidden rounded-3xl border border-zinc-200 bg-white text-left shadow-sm"
+          >
+            <div className="bg-brand-700 px-5 py-4">
+              <p className="font-bold text-white">Test Cafe</p>
+              <p className="text-xs text-brand-100">Rate your visit, claim a gift</p>
+            </div>
+            <div className="px-5 py-4 text-center" aria-hidden="true">
+              <p className="text-3xl tracking-widest text-amber-400">★★★★★</p>
+              <p className="mt-3 flex h-11 items-center justify-center rounded-full bg-brand-600 text-sm font-semibold text-white">
+                Try the live demo
+              </p>
+            </div>
+          </Link>
         </section>
 
         {/* How it works */}
@@ -82,7 +102,7 @@ export default function Home() {
                 key={s.n}
                 className="flex gap-4 rounded-2xl border border-zinc-200 bg-white p-4"
               >
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-zinc-900 text-base font-bold text-white">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-600 text-base font-bold text-white">
                   {s.n}
                 </span>
                 <div>
@@ -118,9 +138,9 @@ export default function Home() {
             One simple price
           </h2>
           <div className="mt-4 grid grid-cols-2 gap-3">
-            <div className="rounded-2xl bg-zinc-900 p-5 text-center text-white">
+            <div className="rounded-2xl bg-brand-700 p-5 text-center text-white">
               <p className="text-2xl font-bold">₹299</p>
-              <p className="mt-1 text-sm text-zinc-300">per month</p>
+              <p className="mt-1 text-sm text-brand-100">per month</p>
             </div>
             <div className="rounded-2xl border border-zinc-200 bg-white p-5 text-center">
               <p className="text-2xl font-bold text-zinc-900">₹2,999</p>
@@ -137,25 +157,12 @@ export default function Home() {
           >
             Get STARGATE on WhatsApp
           </a>
-        </section>
-
-        <footer className="mt-12 text-center text-sm text-zinc-500">
-          <p>
-            Run a shop?{" "}
-            <a
-              href={WHATSAPP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-semibold text-zinc-800"
-            >
-              Message us
-            </a>{" "}
-            ·{" "}
-            <Link href="/s/test-cafe" className="font-semibold text-zinc-800">
-              Live demo
+          <p className="mt-4 text-center text-sm text-zinc-500">
+            <Link href="/pricing" className="font-semibold text-zinc-800">
+              Full pricing details →
             </Link>
           </p>
-        </footer>
+        </section>
       </div>
     </main>
   );

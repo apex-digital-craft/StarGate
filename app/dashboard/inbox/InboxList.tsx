@@ -43,7 +43,7 @@ export default function InboxList({ items }: { items: InboxItem[] }) {
             aria-pressed={filter === f.key}
             className={`h-10 flex-1 rounded-full text-sm font-semibold ${
               filter === f.key
-                ? "bg-zinc-900 text-white"
+                ? "bg-brand-600 text-white"
                 : "border border-zinc-300 bg-white text-zinc-700"
             }`}
           >

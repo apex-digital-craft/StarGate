@@ -37,7 +37,7 @@ export default function GoogleReviewCTA({ merchant }: { merchant: Merchant }) {
         type="button"
         onClick={onClaim}
         style={merchant.brand_color ? { backgroundColor: merchant.brand_color } : undefined}
-        className="mt-3 h-14 w-full rounded-full bg-zinc-900 text-base font-semibold text-white"
+        className="mt-3 h-14 w-full rounded-full bg-brand-600 hover:bg-brand-700 text-base font-semibold text-white"
       >
         Leave a Google Review & claim gift
       </button>

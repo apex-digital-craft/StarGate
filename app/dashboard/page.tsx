@@ -1,7 +1,7 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import SignOutButton from "./SignOutButton";
+import Checklist from "./Checklist";
+import QrCard from "./QrCard";
 import RoiCopy from "./RoiCopy";
 
 export const dynamic = "force-dynamic";
@@ -36,7 +36,7 @@ export default async function DashboardPage() {
   // Owner RLS applies: only shops claimed by this login are visible.
   const { data: shops } = await supabase
     .from("merchants")
-    .select("id, slug, shop_name, freebie_title")
+    .select("id, slug, shop_name, freebie_title, telegram_chat_id, poster_downloaded_at")
     .order("created_at", { ascending: false });
   const shop = shops?.[0] ?? null;
 
@@ -75,24 +75,45 @@ export default async function DashboardPage() {
     }
   }
 
+  let firstScan = false;
+  if (shop) {
+    const [{ count: totalClicks }, { count: totalFeedbacks }] =
+      await Promise.all([
+        supabase
+          .from("review_clicks")
+          .select("id", { count: "exact", head: true })
+          .eq("merchant_id", shop.id),
+        supabase
+          .from("feedbacks")
+          .select("id", { count: "exact", head: true })
+          .eq("merchant_id", shop.id),
+      ]);
+    firstScan = (totalClicks ?? 0) + (totalFeedbacks ?? 0) > 0;
+  }
+
   const roiLine = shop
     ? `Your STARGATE this month: ${clicks30} Google-review taps + ${feedbacks30} private feedbacks` +
       (avg !== null ? ` (avg ${avg.toFixed(1)}★)` : "") +
       ` — ${shop.shop_name}`
     : "";
+  const funnelUrl = shop
+    ? `${(process.env.NEXT_PUBLIC_BASE_URL ?? "").replace(/\/$/, "")}/s/${shop.slug}`
+    : "";
 
   return (
-    <main className="min-h-dvh bg-zinc-50 font-sans">
-      <div className="mx-auto w-full max-w-md px-6 py-10">
-        <p className="text-sm font-semibold tracking-widest text-zinc-500">
-          STARGATE
-        </p>
-        <h1 className="mt-2 text-2xl font-semibold text-zinc-900">
-          {shop ? shop.shop_name : "Owner dashboard"}
-        </h1>
-        <p className="mt-1 text-sm text-zinc-500">
+    <main className="font-sans">
+      <div className="mx-auto w-full max-w-md px-6 py-6">
+        <p className="text-sm text-zinc-500">
           Signed in as {user.email ?? "unknown"}
         </p>
+
+        {shop ? (
+          <Checklist
+            telegramLinked={!!shop.telegram_chat_id}
+            posterReady={!!shop.poster_downloaded_at}
+            firstScan={firstScan}
+          />
+        ) : null}
 
         {shop ? (
           <>
@@ -119,6 +140,7 @@ export default async function DashboardPage() {
               />
             </div>
             <RoiCopy line={roiLine} />
+            <QrCard url={funnelUrl} />
           </>
         ) : (
           <div className="mt-6 rounded-2xl border border-zinc-200 bg-white p-5 text-center">
@@ -130,27 +152,6 @@ export default async function DashboardPage() {
           </div>
         )}
 
-        <div className="w-full">
-          <Link
-            href="/dashboard/inbox"
-            className="mt-4 flex h-14 w-full items-center justify-center rounded-full bg-zinc-900 text-base font-semibold text-white"
-          >
-            View review inbox
-          </Link>
-          <Link
-            href="/dashboard/shop"
-            className="mt-3 flex h-14 w-full items-center justify-center rounded-full border border-zinc-300 bg-white text-base font-semibold text-zinc-800"
-          >
-            Shop settings
-          </Link>
-          <Link
-            href="/dashboard/analytics"
-            className="mt-3 flex h-14 w-full items-center justify-center rounded-full border border-zinc-300 bg-white text-base font-semibold text-zinc-800"
-          >
-            30-day trends
-          </Link>
-          <SignOutButton />
-        </div>
       </div>
     </main>
   );

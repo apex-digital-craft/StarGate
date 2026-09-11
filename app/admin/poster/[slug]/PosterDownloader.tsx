@@ -7,13 +7,22 @@ export default function PosterDownloader({
   shopName,
   pageUrl,
   qrDataUrl,
+  onDownload,
 }: {
   slug: string;
   shopName: string;
   pageUrl: string;
   qrDataUrl: string;
+  onDownload?: () => void;
 }) {
   function download() {
+    // Hook for callers that track the download (e.g. owner activation checklist).
+    // Fire-and-forget: must never block the PDF save.
+    try {
+      onDownload?.();
+    } catch {
+      // Ignore tracking failures.
+    }
     // A4 portrait, mm units. High-contrast black on white for cheap printing.
     const doc = new jsPDF({ unit: "mm", format: "a4" });
 
@@ -38,7 +47,7 @@ export default function PosterDownloader({
     <button
       type="button"
       onClick={download}
-      className="mt-5 h-14 w-full rounded-full bg-zinc-900 text-base font-semibold text-white"
+      className="mt-5 h-14 w-full rounded-full bg-brand-600 hover:bg-brand-700 text-base font-semibold text-white"
     >
       Download A4 PDF
     </button>

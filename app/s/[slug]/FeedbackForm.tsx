@@ -67,10 +67,22 @@ export default function FeedbackForm({
         type="submit"
         disabled={status === "sending"}
         style={merchant.brand_color ? { backgroundColor: merchant.brand_color } : undefined}
-        className="mt-3 h-14 w-full rounded-full bg-zinc-900 text-base font-semibold text-white disabled:opacity-60"
+        className="mt-3 h-14 w-full rounded-full bg-brand-600 hover:bg-brand-700 text-base font-semibold text-white disabled:opacity-60"
       >
         {status === "sending" ? "Sending…" : "Send & claim gift"}
       </button>
+      {/* Policy safety: nobody is blocked from Google — the option visibly exists
+          on the unhappy path. Plain link: no gift change, no click logging. */}
+      <p className="mt-3 text-center text-sm">
+        <a
+          href={merchant.google_review_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-zinc-500 underline decoration-zinc-300 underline-offset-2"
+        >
+          Prefer to review on Google directly?
+        </a>
+      </p>
     </form>
   );
 }
