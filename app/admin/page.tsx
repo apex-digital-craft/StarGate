@@ -15,13 +15,13 @@ async function getMerchantsWithCounts(): Promise<AdminMerchant[]> {
 
   const { data: merchants, error } = await service
     .from("merchants")
-    .select("id, slug, shop_name, freebie_title, owner_id")
+    .select("id, slug, shop_name, freebie_title, owner_id, google_review_url, freebie_url, telegram_chat_id, brand_color, logo_url")
     .order("created_at", { ascending: false });
   if (error) throw error;
 
   const rows: AdminMerchant[] = [];
   for (const m of merchants ?? []) {
-    const [{ count: feedbacks }, { count: clicks }, ownerEmail] =
+    const [{ count: feedbacks }, { count: clicks }, { data: ratings }, ownerEmail] =
       await Promise.all([
         service
           .from("feedbacks")
@@ -30,6 +30,10 @@ async function getMerchantsWithCounts(): Promise<AdminMerchant[]> {
         service
           .from("review_clicks")
           .select("id", { count: "exact", head: true })
+          .eq("merchant_id", m.id),
+        service
+          .from("feedbacks")
+          .select("rating")
           .eq("merchant_id", m.id),
         m.owner_id
           ? service.auth.admin
@@ -40,13 +44,23 @@ async function getMerchantsWithCounts(): Promise<AdminMerchant[]> {
               )
           : Promise.resolve(null),
       ]);
+    const avg =
+      ratings && ratings.length > 0
+        ? ratings.reduce((s, r) => s + r.rating, 0) / ratings.length
+        : null;
     rows.push({
       id: m.id,
       slug: m.slug,
       shop_name: m.shop_name,
       freebie_title: m.freebie_title,
+      google_review_url: m.google_review_url,
+      freebie_url: m.freebie_url,
+      telegram_chat_id: m.telegram_chat_id,
+      brand_color: m.brand_color,
+      logo_url: m.logo_url,
       feedbackCount: feedbacks ?? 0,
       clickCount: clicks ?? 0,
+      avgRating: avg,
       owner_email: ownerEmail,
     });
   }
