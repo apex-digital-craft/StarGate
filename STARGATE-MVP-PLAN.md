@@ -22,7 +22,7 @@ Source of truth for V1. Derived from `business-model.md`.
 **Channels:** Direct walk-ins with 30-sec live demo + WhatsApp for onboarding/renewals.
 **Relationships:** High-touch face-to-face onboarding + hands-off automated routing, Telegram alerts, monthly ROI reports.
 **Stack:** Next.js on Vercel + Supabase + Telegram Bot API + Google (review destination). UPI via Razorpay/PhonePe/Paytm.
-**Cost:** Near-zero — domain ~₹800-1k/yr, Vercel/Supabase free tier, Telegram free unlimited, ~₹6 UPI fee per sub, ~₹20 demo poster.
+**Cost:** Near-zero — domain ~₹800-1k/yr, Vercel/Supabase free tier, Telegram free unlimited, manual UPI collection (₹0 fee; ~₹6/sub only via gateway), ~₹20 demo poster.
 
 ---
 

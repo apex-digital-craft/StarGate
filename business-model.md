@@ -73,7 +73,7 @@ An automated, 2-way review-gating engine:
 
 #### **Transaction & Operational Fees**
 
-* **Payment Gateway UPI Fees:** \~2% per transaction (approx. ₹6 per ₹299 subscription)  
+* **Payments (manual UPI for now):** ₹0 fee — ₹299 received = ₹299 kept. *If* collection ever moves to a gateway (Razorpay / PhonePe / Paytm), ~2% applies (approx. ₹6 per ₹299 subscription)  
 * **Sales & Conveyance:** Minor transit/fuel costs for local walk-in visits  
 * **Demo Collateral:** Single laminated sample poster for in-person demos (\~₹20)
 
