@@ -8,7 +8,7 @@ Target: independent cafes, salons, dental clinics, gyms. Price: **₹299/month**
 
 - Phone: charged, mobile data ON, `/s/test-cafe` funnel bookmarked
 - One laminated demo poster (~₹20)
-- Printed UPI QR for ₹299 collection
+- Payment links ready on phone: [Pay ₹299/month](https://upi.pe/9821323725@ptyes/299.00?pn=Apex+Digital+Craft&tn=one+month+StarGate+subscription) · [Pay ₹2,999/year](https://upi.pe/9821323725@ptyes/2999.00?pn=Apex+Digital+Craft&tn=one+year+subscription+%28two+months+free%29)
 - This checklist memorized: 30-sec demo → objections → close → 3 details
 
 ## 1. Targeting
@@ -40,7 +40,7 @@ Opener: “Can I show you something in 30 seconds?” Then, narrating:
 
 ## 4. Close on the spot
 
-- Collect **₹299 via UPI now**. No “I'll come back tomorrow.”
+- Collect payment via UPI now — [₹299/month](https://upi.pe/9821323725@ptyes/299.00?pn=Apex+Digital+Craft&tn=one+month+StarGate+subscription) or [₹2,999/year](https://upi.pe/9821323725@ptyes/2999.00?pn=Apex+Digital+Craft&tn=one+year+subscription+%28two+months+free%29). No “I'll come back tomorrow.”
 - Collect the 3 setup details: exact shop name, Google review link
   (Maps → business → Share), freebie URL + title.
 - Promise: “Your QR page and poster arrive on WhatsApp today.”

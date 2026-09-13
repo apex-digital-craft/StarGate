@@ -32,7 +32,7 @@ Admin key lives in `.env.local` as `ADMIN_SECRET` (never commit, never share pub
   - Scan wall QR → 2 stars → complaint → submit → Telegram buzzes → gift appears
   - Scan again → 5 stars → Google opens → gift appears immediately
 
-- [ ] **7. Collect ₹299** via UPI QR → note renewal date (same date next month, or yearly ₹2,999)
+- [ ] **7. Collect payment** via UPI — [Pay ₹299/month](https://upi.pe/9821323725@ptyes/299.00?pn=Apex+Digital+Craft&tn=one+month+StarGate+subscription) or [Pay ₹2,999/year](https://upi.pe/9821323725@ptyes/2999.00?pn=Apex+Digital+Craft&tn=one+year+subscription+%28two+months+free%29) → note renewal date (same date next month, or +1 year for yearly)
 
 ## Monthly loop (per paying shop)
 
