@@ -15,7 +15,7 @@ async function getMerchantsWithCounts(): Promise<AdminMerchant[]> {
 
   const { data: merchants, error } = await service
     .from("merchants")
-    .select("id, slug, shop_name, freebie_title, owner_id, google_review_url, freebie_url, telegram_chat_id, brand_color, logo_url")
+    .select("id, slug, shop_name, freebie_title, owner_id, google_review_url, freebie_url, freebie_file_url, poster_image_url, telegram_chat_id, brand_color, logo_url")
     .order("created_at", { ascending: false });
   if (error) throw error;
 
@@ -55,6 +55,8 @@ async function getMerchantsWithCounts(): Promise<AdminMerchant[]> {
       freebie_title: m.freebie_title,
       google_review_url: m.google_review_url,
       freebie_url: m.freebie_url,
+      freebie_file_url: m.freebie_file_url ?? null,
+      poster_image_url: m.poster_image_url ?? null,
       telegram_chat_id: m.telegram_chat_id,
       brand_color: m.brand_color,
       logo_url: m.logo_url,

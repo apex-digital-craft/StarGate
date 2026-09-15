@@ -6,7 +6,7 @@ for operations: `MAINTENANCE.md`; sales/onboarding: `SALES.md`, `ONBOARDING.md`.
 
 ## What it is
 QR scan → `/s/[slug]` 1–5 star tap → 1–3 stars = private feedback + Telegram alert + freebie,
-4–5 stars = Google Review CTA + freebie. Freebie is URL-only (no uploads).
+4–5 stars = Google Review CTA + freebie. Freebie is uploaded PDF (instant download) with URL link as fallback.
 Marketing site (`/`, `/features`, `/pricing`, `/demo`, `/contact`) + owner app
 (Google login → `/dashboard` stats/inbox/settings/trends/poster + QR card) +
 founder `/admin` (`?key=ADMIN_SECRET`).
@@ -18,7 +18,7 @@ founder `/admin` (`?key=ADMIN_SECRET`).
 - Design: indigo brand tokens in `app/globals.css` (`bg-brand-600`), light-only theme, amber reserved for stars/gifts, green for WhatsApp/success.
 
 ## Data model (Supabase, migrations in `supabase/` in order)
-- `merchants(id, slug unique lowercase, shop_name, google_review_url, freebie_url, freebie_title, telegram_chat_id, brand_color?, logo_url?, owner_id? → auth.users, poster_downloaded_at?, created_at)` — all routes resolve from `slug`.
+- `merchants(id, slug unique lowercase, shop_name, google_review_url, freebie_url, freebie_file_url? (Storage `freebies` PDF ≤10MB, instant download), freebie_title, poster_image_url? (Storage `posters` PDF/PNG/JPG ≤10MB, custom design), telegram_chat_id, brand_color?, logo_url?, owner_id? → auth.users, poster_downloaded_at?, created_at)` — all routes resolve from `slug`.
 - `feedbacks(id, merchant_id fk cascade, rating 1-5, feedback_text?, created_at)` + index `(merchant_id, created_at)`.
 - `review_clicks(id, merchant_id fk cascade, created_at)`.
 - RLS: anon SELECT `merchants` + INSERT `feedbacks`/`review_clicks`, deny rest; authenticated owners SELECT/UPDATE own merchant + SELECT own feedbacks/clicks only. Service role bypasses (server use only). Seed `slug=test-cafe`.
@@ -27,9 +27,9 @@ founder `/admin` (`?key=ADMIN_SECRET`).
 - `app/s/[slug]/page.tsx` (force-dynamic, async `params`, `notFound()` on bad slug) + `RatingFlow` (`?demo=1` = no-write demo mode via `useSearchParams`+`<Suspense>`) → `FeedbackForm` / `GoogleReviewCTA` / `FreebieUnlock`.
 - `POST /api/feedback {slug, rating, text}` — validate 1–5 + slug, 10/min/IP in-memory limit, service-role insert, Telegram `sendMessage`. Failure rule: Telegram failure still saves + still unlocks, log only. `telegram_chat_id` never leaves the server.
 - `POST /api/review-click {slug}` fire-and-forget ROI log (client reveals gift regardless).
-- `POST /api/admin/merchants` (create, auto-slugify) + `PUT|DELETE /api/admin/merchants/[slug]` (edit; slug rename + delete need typed confirm) + `POST /api/admin/claim {slug, owner_email}` (assign/unassign owner) — all `ADMIN_SECRET`-gated.
+- `POST /api/admin/merchants` (create, auto-slugify) + `PUT|DELETE /api/admin/merchants/[slug]` (edit; slug rename + delete need typed confirm) + `POST /api/admin/claim {slug, owner_email}` (assign/unassign owner) — all `ADMIN_SECRET`-gated. + `POST|DELETE /api/admin/freebie-upload` (founder PDF upload/remove → Storage `freebies`) + `POST|DELETE /api/admin/poster-upload` (founder design upload/remove → Storage `posters`).
 - `PUT /api/shop` (owner edits own shop; slug/chat-id founder-only) + `POST /api/shop/poster-touch`.
-- `/admin` (create/list/counts/poster links/copy/claim/edit/delete) + `/admin/poster/[slug]` (QR dataURL via `qrcode` → `jspdf` A4 `poster-{slug}.pdf`).
+- `/admin` (create/list/counts/poster links/copy/claim/edit/delete) + `/admin/poster/[slug]` (QR dataURL via `qrcode` → `jspdf` A4 `poster-{slug}.pdf`, plus custom-design upload → Storage `posters`).
 
 ## Env (`.env.local` gitignored + Vercel)
 `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (Config),

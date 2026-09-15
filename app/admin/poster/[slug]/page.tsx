@@ -2,6 +2,7 @@ import QRCode from "qrcode";
 import { notFound } from "next/navigation";
 import { getMerchantBySlug } from "@/lib/supabase";
 import PosterDownloader from "./PosterDownloader";
+import PosterCustomUploader from "./PosterCustomUploader";
 
 export const dynamic = "force-dynamic";
 
@@ -46,21 +47,44 @@ export default async function PosterPage({ params, searchParams }: Props) {
           <h1 className="text-2xl font-bold text-zinc-900">
             {merchant.shop_name}
           </h1>
-          {/* Server-rendered preview of exactly what goes on the poster */}
-          <img
-            src={qrDataUrl}
-            alt={`QR code for ${merchant.shop_name}`}
-            className="mx-auto mt-4 h-64 w-64"
-          />
-          <p className="mt-4 text-xl font-semibold text-zinc-900">
-            Scan &amp; Get FREE Gift
-          </p>
-          <p className="mt-1 break-all text-sm text-zinc-500">{pageUrl}</p>
+          {merchant.poster_image_url ? (
+            <>
+              <p className="mt-1 text-xs font-semibold text-zinc-500">
+                CUSTOM DESIGN ATTACHED
+              </p>
+              <img
+                src={merchant.poster_image_url}
+                alt={`Custom poster for ${merchant.shop_name}`}
+                className="mx-auto mt-3 max-h-96 w-auto rounded-xl border border-zinc-200"
+              />
+            </>
+          ) : (
+            <>
+              {/* Server-rendered preview of exactly what goes on the plain poster */}
+              <img
+                src={qrDataUrl}
+                alt={`QR code for ${merchant.shop_name}`}
+                className="mx-auto mt-4 h-64 w-64"
+              />
+              <p className="mt-4 text-xl font-semibold text-zinc-900">
+                Scan &amp; Get FREE Gift
+              </p>
+              <p className="mt-1 break-all text-sm text-zinc-500">{pageUrl}</p>
+            </>
+          )}
           <PosterDownloader
             slug={merchant.slug}
             shopName={merchant.shop_name}
             pageUrl={pageUrl}
             qrDataUrl={qrDataUrl}
+          />
+          <p className="mt-2 text-xs text-zinc-400">
+            Plain QR PDF — always available as backup.
+          </p>
+          <PosterCustomUploader
+            slug={merchant.slug}
+            adminKey={key}
+            initialUrl={merchant.poster_image_url}
           />
         </div>
       </div>

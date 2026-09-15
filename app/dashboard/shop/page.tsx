@@ -16,7 +16,7 @@ export default async function ShopSettingsPage() {
   const { data: shops } = await supabase
     .from("merchants")
     .select(
-      "slug, shop_name, google_review_url, freebie_url, freebie_title, brand_color, logo_url"
+      "slug, shop_name, google_review_url, freebie_url, freebie_file_url, freebie_title, brand_color, logo_url"
     )
     .order("created_at", { ascending: false });
   const shop = shops?.[0] ?? null;
@@ -40,6 +40,7 @@ export default async function ShopSettingsPage() {
               with the founder.
             </p>
             <ShopForm
+              freebieFileUrl={shop.freebie_file_url ?? null}
               initial={{
                 shop_name: shop.shop_name,
                 google_review_url: shop.google_review_url,

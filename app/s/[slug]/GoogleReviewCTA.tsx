@@ -32,6 +32,7 @@ export default function GoogleReviewCTA({
       <FreebieUnlock
         title={merchant.freebie_title}
         url={merchant.freebie_url}
+        fileUrl={merchant.freebie_file_url}
         accent={merchant.brand_color}
       />
     );

@@ -14,7 +14,13 @@ export type ShopSettings = {
 const inputCls =
   "mt-1 w-full rounded-xl border border-zinc-300 bg-white p-3 text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none";
 
-export default function ShopForm({ initial }: { initial: ShopSettings }) {
+export default function ShopForm({
+  initial,
+  freebieFileUrl,
+}: {
+  initial: ShopSettings;
+  freebieFileUrl?: string | null;
+}) {
   const [form, setForm] = useState(initial);
   const [status, setStatus] = useState<"idle" | "saving" | "error">("idle");
   const [message, setMessage] = useState("");
@@ -45,6 +51,18 @@ export default function ShopForm({ initial }: { initial: ShopSettings }) {
 
   return (
     <form onSubmit={onSubmit} className="mt-4 flex flex-col gap-4">
+      <p
+        role="status"
+        className={`rounded-2xl border p-3 text-sm ${
+          freebieFileUrl
+            ? "border-green-200 bg-green-50 text-green-800"
+            : "border-zinc-200 bg-zinc-50 text-zinc-600"
+        }`}
+      >
+        {freebieFileUrl
+          ? "✓ Instant-download gift file attached — scanners download it directly."
+          : "Gift uses your link (Drive/URL). Ask the founder to attach a file for instant download."}
+      </p>
       <label className="block text-sm font-medium text-zinc-800">
         Shop name
         <input

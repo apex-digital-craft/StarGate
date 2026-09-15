@@ -9,6 +9,8 @@ export type AdminMerchant = {
   freebie_title: string;
   google_review_url: string;
   freebie_url: string;
+  freebie_file_url: string | null;
+  poster_image_url: string | null;
   telegram_chat_id: string;
   brand_color: string | null;
   logo_url: string | null;
@@ -190,6 +192,8 @@ function CreateForm({
         freebie_title: freebieTitle,
         google_review_url: googleUrl,
         freebie_url: freebieUrl,
+        freebie_file_url: null,
+        poster_image_url: null,
         telegram_chat_id: chatId,
         brand_color: brandColor || null,
         logo_url: null,
@@ -302,7 +306,7 @@ function CreateForm({
   );
 }
 
-type Panel = "edit" | "owner" | "danger" | null;
+type Panel = "edit" | "owner" | "danger" | "gift" | null;
 
 function ShopRow({
   merchant: m,
@@ -341,6 +345,8 @@ function ShopRow({
         <Chip>{m.clickCount} taps</Chip>
         <Chip>{m.feedbackCount} feedbacks</Chip>
         <Chip>avg {m.avgRating !== null ? `${m.avgRating.toFixed(1)}★` : "—"}</Chip>
+        {m.freebie_file_url ? <Chip>gift file ✓</Chip> : null}
+        {m.poster_image_url ? <Chip>custom poster ✓</Chip> : null}
       </div>
 
       <div className="mt-3 flex gap-2">
@@ -370,7 +376,7 @@ function ShopRow({
       </div>
 
       <div className="mt-2 flex gap-2">
-        {(["edit", "owner", "danger"] as const).map((p) => (
+        {(["edit", "gift", "owner", "danger"] as const).map((p) => (
           <button
             key={p}
             type="button"
@@ -384,7 +390,7 @@ function ShopRow({
                   : "border border-zinc-300 text-zinc-700"
             }`}
           >
-            {p === "danger" ? "Delete" : p === "owner" ? "Owner" : "Edit"}
+            {p === "danger" ? "Delete" : p === "owner" ? "Owner" : p === "gift" ? "Gift file" : "Edit"}
           </button>
         ))}
       </div>
@@ -406,6 +412,15 @@ function ShopRow({
           onChanged={(email) => {
             onChanged({ owner_email: email });
             setPanel(null);
+          }}
+        />
+      ) : null}
+      {panel === "gift" ? (
+        <FreebieFilePanel
+          merchant={m}
+          adminKey={adminKey}
+          onChanged={(freebie_file_url) => {
+            onChanged({ freebie_file_url });
           }}
         />
       ) : null}
@@ -699,6 +714,123 @@ function DangerPanel({
       >
         {busy ? "Deleting…" : "Delete this shop"}
       </button>
+    </div>
+  );
+}
+
+function FreebieFilePanel({
+  merchant: m,
+  adminKey,
+  onChanged,
+}: {
+  merchant: AdminMerchant;
+  adminKey: string;
+  onChanged: (freebie_file_url: string | null) => void;
+}) {
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+
+  async function onUpload(file: File | undefined) {
+    if (!file) return;
+    setBusy(true);
+    setError("");
+    setMessage("");
+    try {
+      const form = new FormData();
+      form.append("key", adminKey);
+      form.append("slug", m.slug);
+      form.append("file", file);
+      const res = await fetch("/api/admin/freebie-upload", {
+        method: "POST",
+        body: form,
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error ?? `Request failed (${res.status})`);
+      onChanged(data.freebie_file_url ?? null);
+      setMessage("Uploaded. Scanners now download the file instantly.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Couldn't upload.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function onRemove() {
+    setBusy(true);
+    setError("");
+    setMessage("");
+    try {
+      const res = await fetch("/api/admin/freebie-upload", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ key: adminKey, slug: m.slug }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error ?? `Request failed (${res.status})`);
+      onChanged(null);
+      setMessage("Removed. Scanners use the Drive/link freebie again.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Couldn't remove.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="mt-3 border-t border-zinc-100 pt-3">
+      <p className="text-sm font-semibold text-zinc-900">
+        Gift file: {m.freebie_file_url ? "custom PDF attached ✓" : "link only"}
+      </p>
+      <p className="mt-1 text-xs text-zinc-500">
+        Upload a PDF (≤10MB) for instant download. When attached, it replaces the
+        Drive/link button for scanners. Removing reverts to the link.
+      </p>
+      {m.freebie_file_url ? (
+        <a
+          href={m.freebie_file_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-2 block truncate text-sm font-semibold text-zinc-800 underline"
+        >
+          Preview attached file
+        </a>
+      ) : null}
+      <div className="mt-2 flex gap-2">
+        <label className="flex h-10 flex-1 cursor-pointer items-center justify-center rounded-full bg-brand-600 px-4 text-sm font-semibold text-white hover:bg-brand-700">
+          {busy ? "Working…" : "Upload PDF"}
+          <input
+            type="file"
+            accept="application/pdf"
+            disabled={busy}
+            hidden
+            onChange={(e) => {
+              onUpload(e.target.files?.[0]);
+              e.target.value = "";
+            }}
+          />
+        </label>
+        {m.freebie_file_url ? (
+          <button
+            type="button"
+            disabled={busy}
+            onClick={onRemove}
+            className="h-10 shrink-0 rounded-full border border-zinc-300 px-4 text-sm font-semibold text-zinc-700 disabled:opacity-60"
+          >
+            Remove
+          </button>
+        ) : null}
+      </div>
+      {error ? (
+        <p role="alert" className="mt-2 text-sm text-red-600">
+          {error}
+        </p>
+      ) : null}
+      {message ? (
+        <p role="status" className="mt-2 text-sm text-green-700">
+          {message}
+        </p>
+      ) : null}
     </div>
   );
 }

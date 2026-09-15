@@ -16,7 +16,7 @@ export default async function OwnerPosterPage() {
   // Owner RLS applies: only shops claimed by this login are visible.
   const { data: shops } = await supabase
     .from("merchants")
-    .select("slug, shop_name")
+    .select("slug, shop_name, poster_image_url")
     .order("created_at", { ascending: false });
   const shop = shops?.[0] ?? null;
 
@@ -45,12 +45,36 @@ export default async function OwnerPosterPage() {
     width: 800,
     margin: 2,
   });
+  const customUrl = (shop as { poster_image_url?: string | null })
+    .poster_image_url;
 
   return (
     <main className="min-h-dvh bg-zinc-200 font-sans">
       <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col items-center px-6 py-10">
         <div className="w-full rounded-2xl bg-white p-6 text-center shadow">
           <h1 className="text-2xl font-bold text-zinc-900">{shop.shop_name}</h1>
+          {customUrl ? (
+            <>
+              <p className="mt-1 text-xs font-semibold text-zinc-500">
+                YOUR CUSTOM DESIGN
+              </p>
+              <img
+                src={customUrl}
+                alt={`Custom poster for ${shop.shop_name}`}
+                className="mx-auto mt-3 max-h-96 w-auto rounded-xl border border-zinc-200"
+              />
+              <a
+                href={customUrl}
+                download
+                className="mt-4 flex h-14 w-full items-center justify-center rounded-full bg-brand-600 hover:bg-brand-700 text-base font-semibold text-white"
+              >
+                Download custom design
+              </a>
+              <p className="mt-3 text-xs font-semibold text-zinc-500">
+                Or use the plain version below
+              </p>
+            </>
+          ) : null}
           <img
             src={qrDataUrl}
             alt={`QR code for ${shop.shop_name}`}

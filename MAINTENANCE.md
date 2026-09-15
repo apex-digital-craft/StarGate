@@ -58,10 +58,22 @@ session so it gets fixed. Occasional single lines are normal.
 |---|---|
 | No Telegram message arrives | 1. Submit a 2-star test yourself — does it arrive in ~10s? 2. Check the shop’s `telegram_chat_id` is filled (ask AI where). 3. If the token was recently changed somewhere, it must match in BOTH `.env.local` and Vercel + redeploy. |
 | Shop page says “Shop not found” | The link has a typo in the shop’s short-name. Copy the exact link from `/admin` — don’t retype it. |
-| Gift button does nothing | The freebie link is dead or private. Open it yourself in a browser; fix sharing or replace the link in Shop settings. |
+| Gift button does nothing | The freebie link is dead or private. Open it yourself in a browser; fix sharing or replace the link in Shop settings. If a custom gift file is attached, re-upload the PDF in `/admin` → shop → “Gift file”. |
 | Owner can’t log in / gets bounced | Run the login checklist in Part 2, §4, top to bottom — it’s a settings mismatch 9 times out of 10. |
 | Owner dashboard is empty | The shop isn’t linked to their login yet — assign their email in `/admin` (they must sign in once first). |
 | Website shows an error page after a deploy | Vercel → Deployments → click the failed one → missing setting is the usual cause → add it → Redeploy. |
+
+## Gift files — instant downloads
+
+- To attach: open `/admin?key=YOUR_KEY` → shop → “Gift file” → “Upload PDF” → pick a PDF (10MB or less).
+- To revert to the link: same panel → “Remove”. Scanners then use the Drive/link again.
+- Gift file: a PDF you upload once per shop. Scanners tap once and it saves to their phone (no new tab).
+
+## Posters — custom design
+
+- To attach: open `/admin?key=YOUR_KEY` → shop → “Poster” → “Upload design” → pick a PDF, PNG or JPG (10MB or less).
+- To revert to plain: same page → “Remove”. The plain QR poster stays as backup either way.
+- Custom poster: your designed version. Owners download it from their `/dashboard/poster` page.
 
 ## Money — the one rule
 
@@ -94,16 +106,22 @@ Routes (all live): `/` `/features` `/pricing` `/demo` `/contact` (marketing) ·
 `/login` `/auth/callback` (auth) · `/s/[slug]` (customer funnel, no login) ·
 `/dashboard` `/dashboard/inbox` `/dashboard/shop` `/dashboard/analytics`
 `/dashboard/poster` (owner, Google login) · `/admin` `/admin/poster/[slug]`
-(founder, `?key=ADMIN_SECRET`) · `/api/feedback` `/api/review-click`
-`/api/admin/merchants` `/api/admin/claim` `/api/shop` `/api/shop/poster-touch`.
+ (founder, `?key=ADMIN_SECRET`) · `/api/feedback` `/api/review-click`
+  `/api/admin/merchants` `/api/admin/claim` `/api/admin/freebie-upload`
+  `/api/admin/poster-upload` `/api/shop` `/api/shop/poster-touch`.
 
-Migrations (run in order, Supabase → SQL Editor, all re-runnable):
-`supabase/schema.sql` (tables + anon RLS + `test-cafe` seed) →
-`supabase/02-dashboard.sql` (`owner_id` + owner RLS) →
-`supabase/03-activation.sql` (`poster_downloaded_at`).
+ Migrations (run in order, Supabase → SQL Editor, all re-runnable):
+ `supabase/schema.sql` (tables + anon RLS + `test-cafe` seed) →
+ `supabase/02-dashboard.sql` (`owner_id` + owner RLS) →
+ `supabase/03-activation.sql` (`poster_downloaded_at`) →
+ `supabase/04-freebie-file.sql` (`freebie_file_url` + public-read RLS on Storage `freebies` bucket; bucket itself is created in Dashboard → Storage → New bucket, Public ON) →
+ `supabase/05-poster-file.sql` (`poster_image_url` + public-read RLS on Storage `posters` bucket; bucket itself is created in Dashboard → Storage → New bucket, Public ON).
 
-Data model: `merchants` (all routes resolve from lowercase `slug`; `owner_id`
-nullable → `auth.users`; `telegram_chat_id` server-only) · `feedbacks`
+ Data model: `merchants` (all routes resolve from lowercase `slug`; `owner_id`
+ nullable → `auth.users`; `telegram_chat_id` server-only; `freebie_file_url`
+ nullable → public Storage `freebies` PDF ≤10MB, instant download, `freebie_url`
+ stays as link fallback; `poster_image_url` nullable → public Storage `posters`
+ PDF/PNG/JPG ≤10MB, custom design, plain QR PDF stays as backup) · `feedbacks`
 (`merchant_id` cascade, rating 1–5, index on `(merchant_id, created_at)`) ·
 `review_clicks` (`merchant_id` cascade). RLS: anon SELECT `merchants` + INSERT
 `feedbacks`/`review_clicks`, deny rest; authenticated owners SELECT/UPDATE own
@@ -167,8 +185,9 @@ inline in client bundles). Vercel env change → redeploy to take effect.
 
 ## 6. Cost watch (numbers behind Part 1)
 
-Free tiers (confirm current caps in each dashboard — they change): Supabase
-≈500MB database + bandwidth allowance; Vercel ≈100GB bandwidth; Telegram Bot
+ Free tiers (confirm current caps in each dashboard — they change): Supabase
+ ≈500MB database + ~1GB storage (gift PDFs ≤10MB each — dozens of shops fit
+ comfortably) + bandwidth allowance; Vercel ≈100GB bandwidth; Telegram Bot
 API free unlimited. Manual UPI collection is free; gateway processing would cost ≈₹6/subscription. Upgrade triggers: database
 nearing cap (archive first), bandwidth overages, or team seats. Never upgrade
 preemptively.

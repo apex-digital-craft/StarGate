@@ -6,7 +6,9 @@ export type Merchant = {
   shop_name: string;
   google_review_url: string;
   freebie_url: string;
+  freebie_file_url: string | null;
   freebie_title: string;
+  poster_image_url: string | null;
   brand_color: string | null;
   logo_url: string | null;
 };
@@ -39,7 +41,7 @@ export async function getMerchantBySlug(slug: string): Promise<Merchant | null> 
   const { data, error } = await supabase
     .from("merchants")
     .select(
-      "id, slug, shop_name, google_review_url, freebie_url, freebie_title, brand_color, logo_url"
+      "id, slug, shop_name, google_review_url, freebie_url, freebie_file_url, freebie_title, poster_image_url, brand_color, logo_url"
     )
     .eq("slug", slug.toLowerCase())
     .maybeSingle();
