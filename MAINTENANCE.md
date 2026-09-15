@@ -71,7 +71,8 @@ session so it gets fixed. Occasional single lines are normal.
 
 ## Posters — custom design
 
-- To attach: open `/admin?key=YOUR_KEY` → shop → “Poster” → “Upload design” → pick a PDF, PNG or JPG (10MB or less).
+- Step 1: open `/admin?key=YOUR_KEY` → shop → “Poster” → “Download QR PNG” → paste the clean QR image into your design (the plain A4 PDF is there too if needed).
+- Step 2: same page → “Upload design” → pick the finished PDF, PNG or JPG (10MB or less). Merchants then get it as the first download.
 - To revert to plain: same page → “Remove”. The plain QR poster stays as backup either way.
 - Custom poster: your designed version. Owners download it from their `/dashboard/poster` page.
 
@@ -108,7 +109,11 @@ Routes (all live): `/` `/features` `/pricing` `/demo` `/contact` (marketing) ·
 `/dashboard/poster` (owner, Google login) · `/admin` `/admin/poster/[slug]`
  (founder, `?key=ADMIN_SECRET`) · `/api/feedback` `/api/review-click`
   `/api/admin/merchants` `/api/admin/claim` `/api/admin/freebie-upload`
-  `/api/admin/poster-upload` `/api/shop` `/api/shop/poster-touch`.
+  `/api/admin/poster-upload` `/api/download/[freebie|poster]/[slug]`
+  `/api/shop` `/api/shop/poster-touch`. File downloads go through the
+  same-origin `/api/download` proxy (`Content-Disposition: attachment`) —
+  never link Storage URLs directly, browsers open those in a tab instead
+  of downloading.
 
  Migrations (run in order, Supabase → SQL Editor, all re-runnable):
  `supabase/schema.sql` (tables + anon RLS + `test-cafe` seed) →

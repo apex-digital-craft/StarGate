@@ -27,9 +27,9 @@ founder `/admin` (`?key=ADMIN_SECRET`).
 - `app/s/[slug]/page.tsx` (force-dynamic, async `params`, `notFound()` on bad slug) + `RatingFlow` (`?demo=1` = no-write demo mode via `useSearchParams`+`<Suspense>`) → `FeedbackForm` / `GoogleReviewCTA` / `FreebieUnlock`.
 - `POST /api/feedback {slug, rating, text}` — validate 1–5 + slug, 10/min/IP in-memory limit, service-role insert, Telegram `sendMessage`. Failure rule: Telegram failure still saves + still unlocks, log only. `telegram_chat_id` never leaves the server.
 - `POST /api/review-click {slug}` fire-and-forget ROI log (client reveals gift regardless).
-- `POST /api/admin/merchants` (create, auto-slugify) + `PUT|DELETE /api/admin/merchants/[slug]` (edit; slug rename + delete need typed confirm) + `POST /api/admin/claim {slug, owner_email}` (assign/unassign owner) — all `ADMIN_SECRET`-gated. + `POST|DELETE /api/admin/freebie-upload` (founder PDF upload/remove → Storage `freebies`) + `POST|DELETE /api/admin/poster-upload` (founder design upload/remove → Storage `posters`).
+- `POST /api/admin/merchants` (create, auto-slugify) + `PUT|DELETE /api/admin/merchants/[slug]` (edit; slug rename + delete need typed confirm) + `POST /api/admin/claim {slug, owner_email}` (assign/unassign owner) — all `ADMIN_SECRET`-gated. + `POST|DELETE /api/admin/freebie-upload` (founder PDF upload/remove → Storage `freebies`) + `POST|DELETE /api/admin/poster-upload` (founder design upload/remove → Storage `posters`) + `GET /api/download/[freebie|poster]/[slug]` (same-origin proxy, `Content-Disposition: attachment` — browsers ignore `download` on cross-origin Storage URLs).
 - `PUT /api/shop` (owner edits own shop; slug/chat-id founder-only) + `POST /api/shop/poster-touch`.
-- `/admin` (create/list/counts/poster links/copy/claim/edit/delete) + `/admin/poster/[slug]` (QR dataURL via `qrcode` → `jspdf` A4 `poster-{slug}.pdf`, plus custom-design upload → Storage `posters`).
+- `/admin` (create/list/counts/poster links/copy/claim/edit/delete) + `/admin/poster/[slug]` (Step 1 QR PNG + plain A4 `poster-{slug}.pdf` via `qrcode`→`jspdf`, Step 2 custom-design upload → Storage `posters`).
 
 ## Env (`.env.local` gitignored + Vercel)
 `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (Config),

@@ -24,6 +24,7 @@ export default function FeedbackForm({
         title={merchant.freebie_title}
         url={merchant.freebie_url}
         fileUrl={merchant.freebie_file_url}
+        slug={merchant.slug}
         accent={merchant.brand_color}
       />
     );

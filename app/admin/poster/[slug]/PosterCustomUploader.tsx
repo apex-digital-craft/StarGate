@@ -66,7 +66,7 @@ export default function PosterCustomUploader({
   }
 
   return (
-    <div className="mt-6 border-t border-zinc-100 pt-5 text-left">
+    <div className="mt-3 text-left">
       <p className="text-sm font-semibold text-zinc-900">
         Custom design: {customUrl ? "attached ✓" : "none yet"}
       </p>
@@ -77,7 +77,7 @@ export default function PosterCustomUploader({
       </p>
       {customUrl ? (
         <a
-          href={customUrl}
+          href={`/api/download/poster/${slug}`}
           download
           className="mt-3 flex h-14 w-full items-center justify-center rounded-full bg-zinc-900 text-base font-semibold text-white"
         >

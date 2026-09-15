@@ -8,12 +8,16 @@ export default function PosterDownloader({
   pageUrl,
   qrDataUrl,
   onDownload,
+  label,
+  secondary,
 }: {
   slug: string;
   shopName: string;
   pageUrl: string;
   qrDataUrl: string;
   onDownload?: () => void;
+  label?: string;
+  secondary?: boolean;
 }) {
   function download() {
     // Hook for callers that track the download (e.g. owner activation checklist).
@@ -47,9 +51,13 @@ export default function PosterDownloader({
     <button
       type="button"
       onClick={download}
-      className="mt-5 h-14 w-full rounded-full bg-brand-600 hover:bg-brand-700 text-base font-semibold text-white"
+      className={
+        secondary
+          ? "mt-2 h-11 w-full rounded-full border border-zinc-300 text-sm font-semibold text-zinc-700"
+          : "mt-5 h-14 w-full rounded-full bg-brand-600 hover:bg-brand-700 text-base font-semibold text-white"
+      }
     >
-      Download A4 PDF
+      {label ?? "Download A4 PDF"}
     </button>
   );
 }

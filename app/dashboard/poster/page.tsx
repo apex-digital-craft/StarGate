@@ -64,7 +64,7 @@ export default async function OwnerPosterPage() {
                 className="mx-auto mt-3 max-h-96 w-auto rounded-xl border border-zinc-200"
               />
               <a
-                href={customUrl}
+                href={`/api/download/poster/${shop.slug}`}
                 download
                 className="mt-4 flex h-14 w-full items-center justify-center rounded-full bg-brand-600 hover:bg-brand-700 text-base font-semibold text-white"
               >
@@ -89,6 +89,7 @@ export default async function OwnerPosterPage() {
             shopName={shop.shop_name}
             pageUrl={pageUrl}
             qrDataUrl={qrDataUrl}
+            secondary={!!customUrl}
           />
           <p className="mt-3 text-xs text-zinc-400">
             Print it, stick it at the counter — readable from 2–3 feet.
