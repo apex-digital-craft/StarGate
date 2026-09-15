@@ -3,6 +3,7 @@ import QRCode from "qrcode";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import OwnerPosterDownloader from "./OwnerPosterDownloader";
+import OwnerCustomDownloadButton from "./OwnerCustomDownloadButton";
 
 export const dynamic = "force-dynamic";
 
@@ -63,13 +64,7 @@ export default async function OwnerPosterPage() {
                 alt={`Custom poster for ${shop.shop_name}`}
                 className="mx-auto mt-3 max-h-96 w-auto rounded-xl border border-zinc-200"
               />
-              <a
-                href={`/api/download/poster/${shop.slug}`}
-                download
-                className="mt-4 flex h-14 w-full items-center justify-center rounded-full bg-brand-600 hover:bg-brand-700 text-base font-semibold text-white"
-              >
-                Download custom design
-              </a>
+              <OwnerCustomDownloadButton slug={shop.slug} />
               <p className="mt-3 text-xs font-semibold text-zinc-500">
                 Or use the plain version below
               </p>
